@@ -5,10 +5,9 @@ import {
   Music2,
   Play,
   Pause,
-  Sparkles,
-  Heart,
-  Volume2,
   VolumeX,
+  Sparkles,
+  Crown,
 } from "lucide-react";
 
 // ==========================================
@@ -17,21 +16,24 @@ import {
 
 const musicaConfig = {
   archivo: "/musica.mp3",
-  nombre: "Isabella Montiel",
+  nombre: "Camila",
   titulo: "Mis XV Años",
   volumen: 0.65,
 };
 
 // ==========================================
-// PALETA XV ESENCIAL
+// PALETA CHAMPAGNE · DORADO · BEIGE · CAFÉ
 // ==========================================
 
 const colores = {
-  marfil: "#F8F2F0",
-  rosaClaro: "#E8CFCB",
-  rosaAntiguo: "#C89B91",
-  champagne: "#B89A6A",
-  ciruela: "#66545A",
+  cafe: "#42291E",
+  cafeProfundo: "#2B1A14",
+  cafeClaro: "#75533D",
+  champagne: "#F1E2C8",
+  beige: "#E8D9C6",
+  dorado: "#C9A15F",
+  doradoClaro: "#E7C991",
+  marfil: "#FFF8ED",
 };
 
 // ==========================================
@@ -46,7 +48,7 @@ export default function Musica() {
   const [error, setError] = useState("");
 
   // ==========================================
-  // CONFIGURAR AUDIO
+  // CONFIGURACIÓN DEL AUDIO
   // ==========================================
 
   useEffect(() => {
@@ -81,7 +83,7 @@ export default function Musica() {
   }, []);
 
   // ==========================================
-  // BLOQUEAR SCROLL MIENTRAS ESTÁ LA VENTANA
+  // BLOQUEAR SCROLL DURANTE LA BIENVENIDA
   // ==========================================
 
   useEffect(() => {
@@ -96,7 +98,7 @@ export default function Musica() {
   }, [mostrarVentana]);
 
   // ==========================================
-  // ABRIR INVITACIÓN CON MÚSICA
+  // ABRIR CON MÚSICA
   // ==========================================
 
   const abrirConMusica = async () => {
@@ -110,13 +112,13 @@ export default function Musica() {
       setError("");
       await audio.play();
     } catch (err) {
-      console.error("No se pudo reproducir la música:", err);
-      setError("Toca el botón de música para intentar reproducirla.");
+      console.error("Error al reproducir música:", err);
+      setError("Toca el botón de música para reproducirla.");
     }
   };
 
   // ==========================================
-  // ABRIR INVITACIÓN SIN MÚSICA
+  // ABRIR SIN MÚSICA
   // ==========================================
 
   const abrirSinMusica = () => {
@@ -148,7 +150,6 @@ export default function Musica() {
 
   return (
     <>
-      {/* AUDIO PRINCIPAL */}
       <audio
         ref={audioRef}
         src={musicaConfig.archivo}
@@ -157,34 +158,36 @@ export default function Musica() {
       />
 
       {/* ======================================
-          VENTANA EMERGENTE DE BIENVENIDA
+          VENTANA DE BIENVENIDA
       ====================================== */}
 
       <AnimatePresence>
         {mostrarVentana && (
           <motion.div
-            key="ventana-musica"
+            key="bienvenida-xv"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7 }}
             className="
               fixed inset-0 z-[9999]
               flex items-center justify-center
               overflow-y-auto
-              bg-[#241D20]/80
-              px-5 py-6
-              backdrop-blur-md
+              px-4 py-5
+              backdrop-blur-lg
             "
+            style={{
+              backgroundColor: "rgba(26, 15, 11, 0.94)",
+            }}
           >
             <motion.div
               role="dialog"
               aria-modal="true"
-              aria-labelledby="titulo-bienvenida-musica"
+              aria-labelledby="titulo-musica-xv"
               initial={{
                 opacity: 0,
-                y: 35,
-                scale: 0.92,
+                y: 45,
+                scale: 0.94,
               }}
               animate={{
                 opacity: 1,
@@ -197,221 +200,413 @@ export default function Musica() {
                 scale: 0.96,
               }}
               transition={{
-                duration: 0.7,
+                duration: 0.9,
                 ease: [0.22, 1, 0.36, 1],
               }}
               className="
-                relative
-                my-auto
-                w-full
-                max-w-md
+                relative my-auto
+                w-full max-w-[430px]
                 overflow-hidden
-                bg-[#66545A]
-                px-8 py-12
+                px-7 py-10
                 text-center
-                shadow-[0_25px_80px_rgba(0,0,0,0.35)]
-                sm:px-12 sm:py-14
+                sm:px-12 sm:py-12
               "
+              style={{
+                background: `
+                  radial-gradient(
+                    ellipse at 50% 12%,
+                    rgba(201,161,95,0.17),
+                    transparent 55%
+                  ),
+                  linear-gradient(
+                    155deg,
+                    #75533D 0%,
+                    #42291E 38%,
+                    #2B1A14 100%
+                  )
+                `,
+                boxShadow:
+                  "0 30px 100px rgba(0,0,0,0.45)",
+              }}
             >
-              {/* MARCO EXTERIOR */}
+              {/* RESPLANDOR SUPERIOR */}
+
               <div
-                className="pointer-events-none absolute inset-3 border"
+                className="
+                  pointer-events-none
+                  absolute left-1/2 top-0
+                  h-48 w-64
+                  -translate-x-1/2
+                  rounded-full blur-3xl
+                "
                 style={{
-                  borderColor: "rgba(184,154,106,0.6)",
+                  background:
+                    "rgba(231,201,145,0.12)",
+                }}
+              />
+
+              {/* MARCO EXTERIOR */}
+
+              <div
+                className="
+                  pointer-events-none
+                  absolute inset-[9px]
+                  border
+                "
+                style={{
+                  borderColor:
+                    "rgba(231,201,145,0.55)",
                 }}
               />
 
               {/* MARCO INTERIOR */}
+
               <div
-                className="pointer-events-none absolute inset-5 border"
+                className="
+                  pointer-events-none
+                  absolute inset-[15px]
+                  border
+                "
                 style={{
-                  borderColor: "rgba(232,207,203,0.2)",
+                  borderColor:
+                    "rgba(231,201,145,0.16)",
                 }}
               />
 
-              <div className="relative z-10 flex flex-col items-center">
+              {/* ARCO DECORATIVO */}
 
-                {/* ORNAMENTO SUPERIOR */}
-                <div className="mb-7 flex items-center gap-4">
-                  <span className="h-px w-10 bg-[#B89A6A]" />
+              <div
+                className="
+                  pointer-events-none
+                  absolute left-1/2 top-7
+                  h-[390px] w-[86%]
+                  -translate-x-1/2
+                  rounded-t-[190px]
+                  border border-b-0
+                "
+                style={{
+                  borderColor:
+                    "rgba(231,201,145,0.38)",
+                }}
+              />
 
-                  <Sparkles
-                    size={20}
-                    strokeWidth={1.2}
-                    color={colores.champagne}
+              {/* LUCES DECORATIVAS */}
+
+              <motion.div
+                className="
+                  pointer-events-none
+                  absolute left-10 top-20
+                  h-2 w-2 rounded-full
+                "
+                style={{
+                  backgroundColor: colores.doradoClaro,
+                  boxShadow:
+                    "0 0 18px rgba(231,201,145,0.9)",
+                }}
+                animate={{
+                  opacity: [0.3, 1, 0.3],
+                  scale: [0.8, 1.3, 0.8],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                }}
+              />
+
+              <motion.div
+                className="
+                  pointer-events-none
+                  absolute right-10 top-44
+                  h-1.5 w-1.5 rounded-full
+                "
+                style={{
+                  backgroundColor: colores.doradoClaro,
+                  boxShadow:
+                    "0 0 16px rgba(231,201,145,0.9)",
+                }}
+                animate={{
+                  opacity: [1, 0.3, 1],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                }}
+              />
+
+              {/* CONTENIDO */}
+
+              <div
+                className="
+                  relative z-10
+                  flex flex-col items-center
+                "
+              >
+                {/* CORONA */}
+
+                <motion.div
+                  initial={{ opacity: 0, y: -15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                >
+                  <Crown
+                    size={46}
+                    strokeWidth={1}
+                    color={colores.doradoClaro}
+                  />
+                </motion.div>
+
+                {/* ORNAMENTO */}
+
+                <div className="mt-5 flex items-center gap-3">
+                  <span
+                    className="h-px w-12"
+                    style={{
+                      backgroundColor: colores.dorado,
+                    }}
                   />
 
-                  <span className="h-px w-10 bg-[#B89A6A]" />
+                  <Sparkles
+                    size={16}
+                    strokeWidth={1}
+                    color={colores.doradoClaro}
+                  />
+
+                  <span
+                    className="h-px w-12"
+                    style={{
+                      backgroundColor: colores.dorado,
+                    }}
+                  />
                 </div>
 
                 {/* SUBTÍTULO */}
-                <p className="
-                  text-[10px] uppercase
-                  tracking-[0.35em]
-                  text-[#E8CFCB]
-                  sm:text-xs
-                ">
-                  Estás invitado a celebrar
+
+                <p
+                  className="
+                    mt-6 text-[10px]
+                    uppercase tracking-[0.38em]
+                    sm:text-xs
+                  "
+                  style={{
+                    color: colores.champagne,
+                  }}
+                >
+                  Una noche inolvidable
                 </p>
 
                 {/* TÍTULO */}
+
                 <h2
-                  id="titulo-bienvenida-musica"
+                  id="titulo-musica-xv"
                   className="
-                    mt-5
-                    font-serif
-                    text-4xl
+                    mt-3 text-5xl
                     leading-tight
-                    text-[#F8F2F0]
+                    sm:text-6xl
+                  "
+                  style={{
+                    fontFamily:
+                      '"Playfair Display", Georgia, serif',
+                    color: colores.doradoClaro,
+                    textShadow:
+                      "0 3px 25px rgba(201,161,95,0.18)",
+                  }}
+                >
+                  Mis XV
+                </h2>
+
+                <p
+                  className="
+                    -mt-1 text-4xl italic
                     sm:text-5xl
                   "
                   style={{
                     fontFamily:
                       '"Playfair Display", Georgia, serif',
+                    color: colores.champagne,
                   }}
                 >
-                  Mis XV Años
-                </h2>
+                  Años
+                </p>
 
                 {/* NOMBRE */}
+
                 <p
                   className="
-                    mt-4
-                    font-serif
-                    text-2xl
-                    italic
-                    text-[#E8CFCB]
-                    sm:text-3xl
+                    mt-5 text-xl
+                    tracking-wide
+                    sm:text-2xl
                   "
                   style={{
                     fontFamily:
                       '"Playfair Display", Georgia, serif',
+                    color: colores.marfil,
                   }}
                 >
                   {musicaConfig.nombre}
                 </p>
 
                 {/* DIVISOR */}
-                <div className="my-8 flex items-center gap-3">
-                  <span className="h-px w-10 bg-[#B89A6A]" />
 
-                  <Heart
-                    size={17}
-                    strokeWidth={1.2}
-                    color={colores.rosaClaro}
+                <div className="my-7 flex items-center gap-3">
+                  <span
+                    className="h-px w-10"
+                    style={{
+                      backgroundColor: colores.dorado,
+                    }}
                   />
 
-                  <span className="h-px w-10 bg-[#B89A6A]" />
+                  <span
+                    style={{
+                      color: colores.doradoClaro,
+                    }}
+                  >
+                    ✦
+                  </span>
+
+                  <span
+                    className="h-px w-10"
+                    style={{
+                      backgroundColor: colores.dorado,
+                    }}
+                  />
                 </div>
 
                 {/* ICONO MUSICAL */}
+
                 <motion.div
                   animate={{
                     y: [0, -6, 0],
                   }}
                   transition={{
-                    duration: 3,
+                    duration: 3.5,
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
                   className="
-                    mb-7
-                    flex
-                    h-20 w-20
+                    flex h-[74px] w-[74px]
                     items-center justify-center
-                    rounded-full
-                    border
+                    rounded-full border
                   "
                   style={{
-                    borderColor: "rgba(184,154,106,0.6)",
-                    backgroundColor:
-                      "rgba(248,242,240,0.06)",
+                    borderColor:
+                      "rgba(231,201,145,0.55)",
+                    background:
+                      "rgba(231,201,145,0.07)",
+                    boxShadow:
+                      "0 0 35px rgba(201,161,95,0.12)",
                   }}
                 >
                   <Music2
-                    size={34}
+                    size={31}
                     strokeWidth={1.2}
-                    color={colores.rosaClaro}
+                    color={colores.doradoClaro}
                   />
                 </motion.div>
 
                 {/* MENSAJE */}
+
                 <p
                   className="
-                    max-w-xs
-                    font-serif
-                    text-base
+                    mt-6 max-w-xs
+                    text-base italic
                     leading-relaxed
-                    text-[#F8F2F0]
-                    sm:text-lg
                   "
                   style={{
                     fontFamily:
                       '"Playfair Display", Georgia, serif',
+                    color: colores.marfil,
                   }}
                 >
-                  Cada historia especial
-                  tiene una melodía...
+                  Hay momentos que merecen
+                  una melodía especial...
                 </p>
 
-                <p className="
-                  mt-3
-                  text-sm
-                  leading-relaxed
-                  text-[#E8CFCB]
-                ">
-                  ¿Te gustaría disfrutar esta invitación
-                  acompañada de música?
+                <p
+                  className="
+                    mt-3 max-w-xs
+                    text-sm leading-relaxed
+                  "
+                  style={{
+                    color: colores.beige,
+                  }}
+                >
+                  Te invito a disfrutar esta celebración
+                  acompañada de música.
                 </p>
 
                 {/* BOTÓN CON MÚSICA */}
+
                 <motion.button
                   type="button"
                   onClick={abrirConMusica}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   className="
-                    mt-9
-                    flex w-full
-                    items-center justify-center gap-3
-                    rounded-full
-                    bg-[#F8F2F0]
+                    mt-8 flex w-full
+                    items-center justify-center
+                    gap-3 rounded-full
                     px-5 py-4
                     text-sm font-semibold
-                    text-[#66545A]
-                    shadow-lg
-                    transition-colors
-                    hover:bg-[#E8CFCB]
+                    transition-all
                   "
+                  style={{
+                    color: colores.cafeProfundo,
+                    background:
+                      "linear-gradient(120deg, #E7C991, #C9A15F, #F1E2C8)",
+                    boxShadow:
+                      "0 8px 30px rgba(201,161,95,0.25)",
+                  }}
                 >
-                  <Play size={18} fill="currentColor" />
+                  <Play
+                    size={17}
+                    fill="currentColor"
+                  />
                   Abrir invitación con música
                 </motion.button>
 
                 {/* BOTÓN SIN MÚSICA */}
+
                 <button
                   type="button"
                   onClick={abrirSinMusica}
                   className="
-                    mt-5
-                    flex items-center justify-center gap-2
-                    text-sm
-                    text-[#E8CFCB]
-                    underline-offset-4
-                    transition-colors
-                    hover:text-white
-                    hover:underline
+                    mt-5 flex items-center
+                    justify-center gap-2
+                    text-sm transition-opacity
+                    hover:opacity-70
                   "
+                  style={{
+                    color: colores.champagne,
+                  }}
                 >
                   <VolumeX size={17} />
                   Continuar sin música
                 </button>
 
                 {/* ORNAMENTO INFERIOR */}
-                <div className="mt-9 flex items-center gap-4">
-                  <span className="h-px w-10 bg-[#B89A6A]" />
-                  <span className="text-[#E8CFCB]">✧</span>
-                  <span className="h-px w-10 bg-[#B89A6A]" />
+
+                <div className="mt-8 flex items-center gap-4">
+                  <span
+                    className="h-px w-10"
+                    style={{
+                      backgroundColor: colores.dorado,
+                    }}
+                  />
+
+                  <span
+                    style={{
+                      color: colores.doradoClaro,
+                    }}
+                  >
+                    ✧
+                  </span>
+
+                  <span
+                    className="h-px w-10"
+                    style={{
+                      backgroundColor: colores.dorado,
+                    }}
+                  />
                 </div>
               </div>
             </motion.div>
@@ -450,21 +645,21 @@ export default function Musica() {
               duration: 0.4,
             }}
             className="
-              fixed
-              bottom-6 right-5
+              fixed bottom-6 right-5
               z-[999]
               flex h-14 w-14
               items-center justify-center
-              rounded-full
-              border
-              bg-[#66545A]
-              text-[#F8F2F0]
-              shadow-[0_8px_30px_rgba(102,84,90,0.35)]
+              rounded-full border
               sm:bottom-8 sm:right-8
               sm:h-16 sm:w-16
             "
             style={{
-              borderColor: colores.champagne,
+              color: colores.champagne,
+              background:
+                "linear-gradient(145deg, #75533D, #2B1A14)",
+              borderColor: colores.dorado,
+              boxShadow:
+                "0 8px 30px rgba(43,26,20,0.4)",
             }}
             aria-label={
               reproduciendo
@@ -478,6 +673,7 @@ export default function Musica() {
             }
           >
             {/* ANILLO ANIMADO */}
+
             {reproduciendo && (
               <motion.span
                 className="
@@ -486,10 +682,10 @@ export default function Musica() {
                   rounded-full border
                 "
                 style={{
-                  borderColor: colores.rosaClaro,
+                  borderColor: colores.doradoClaro,
                 }}
                 animate={{
-                  scale: [1, 1.4],
+                  scale: [1, 1.45],
                   opacity: [0.7, 0],
                 }}
                 transition={{
@@ -515,21 +711,26 @@ export default function Musica() {
         )}
       </AnimatePresence>
 
-      {/* MENSAJE DE ERROR */}
+      {/* ======================================
+          MENSAJE DE ERROR
+      ====================================== */}
+
       {error && !mostrarVentana && (
         <div
           role="alert"
           className="
             fixed bottom-24 right-5
-            z-[999]
-            max-w-xs
-            rounded-lg
-            bg-[#66545A]
+            z-[999] max-w-xs
+            rounded-lg border
             px-4 py-3
-            text-xs text-white
-            shadow-lg
+            text-xs shadow-lg
             sm:right-8
           "
+          style={{
+            backgroundColor: colores.cafe,
+            borderColor: colores.dorado,
+            color: colores.marfil,
+          }}
         >
           {error}
         </div>

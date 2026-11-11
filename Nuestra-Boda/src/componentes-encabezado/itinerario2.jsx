@@ -2,76 +2,62 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  Camera,
+  Church,
+  Wine,
   UtensilsCrossed,
   Music2,
-  Cake,
   Sparkles,
-  Crown,
   Heart,
 } from "lucide-react";
 
 // ==========================================
-// PALETA XV ESENCIAL - WEDLY
-// ROSA EMPOLVADO Y CHAMPÁN
-// ==========================================
-
-const colores = {
-  marfil: "#F8F2F0",
-  rosaClaro: "#E8CFCB",
-  rosaAntiguo: "#C89B91",
-  champagne: "#B89A6A",
-  ciruela: "#66545A",
-};
-
-// ==========================================
-// INFORMACIÓN EDITABLE - WEDLY
+// CONFIGURACIÓN EDITABLE - WEDLY
 // ==========================================
 
 const eventos = [
   {
     id: 1,
-    titulo: "Sesión de fotografías",
+    titulo: "Misa",
     hora: "4:00 PM",
-    descripcion: "Capturando recuerdos inolvidables.",
-    icono: Camera,
+    descripcion: "Damos gracias por este día tan especial.",
+    icono: Church,
   },
   {
     id: 2,
-    titulo: "Entrada de Isabella",
-    hora: "5:00 PM",
-    descripcion: "El comienzo de una noche mágica.",
-    icono: Crown,
+    titulo: "Recepción",
+    hora: "6:00 PM",
+    descripcion: "Bienvenidos a una noche inolvidable.",
+    icono: Wine,
   },
   {
     id: 3,
     titulo: "Cena",
-    hora: "6:00 PM",
+    hora: "7:00 PM",
     descripcion: "Compartamos juntos este momento especial.",
     icono: UtensilsCrossed,
   },
   {
     id: 4,
     titulo: "Vals",
-    hora: "7:30 PM",
+    hora: "8:00 PM",
     descripcion: "Un baile para recordar toda la vida.",
-    icono: Heart,
-  },
-  {
-    id: 5,
-    titulo: "Pastel",
-    hora: "8:30 PM",
-    descripcion: "Un dulce momento para celebrar.",
-    icono: Cake,
-  },
-  {
-    id: 6,
-    titulo: "Baile y celebración",
-    hora: "9:00 PM",
-    descripcion: "¡Que comience la diversión!",
     icono: Music2,
   },
 ];
+
+// ==========================================
+// PALETA CHAMPAGNE · DORADO · BEIGE · CAFÉ
+// ==========================================
+
+const colores = {
+  beige: "#E8D9C6",
+  cafe: "#42291E",
+  cafeProfundo: "#2B1A14",
+  cafeClaro: "#75533D",
+  dorado: "#B58C50",
+  doradoClaro: "#C9A15F",
+  marfil: "#FFF8ED",
+};
 
 // ==========================================
 // ANIMACIONES
@@ -80,7 +66,7 @@ const eventos = [
 const fadeUp = {
   hidden: {
     opacity: 0,
-    y: 35,
+    y: 30,
   },
   visible: {
     opacity: 1,
@@ -93,17 +79,47 @@ const fadeUp = {
 };
 
 // ==========================================
-// TARJETA DEL ITINERARIO
+// ORNAMENTO
 // ==========================================
 
-const TarjetaItinerario = ({ evento, index }) => {
+function Ornamento() {
+  return (
+    <div className="flex items-center justify-center gap-4">
+      <span
+        className="h-px w-12 sm:w-16"
+        style={{
+          backgroundColor: colores.dorado,
+        }}
+      />
+
+      <Sparkles
+        size={19}
+        strokeWidth={1.2}
+        color={colores.dorado}
+      />
+
+      <span
+        className="h-px w-12 sm:w-16"
+        style={{
+          backgroundColor: colores.dorado,
+        }}
+      />
+    </div>
+  );
+}
+
+// ==========================================
+// TARJETA DE EVENTO
+// ==========================================
+
+function TarjetaItinerario({ evento, index }) {
   const Icono = evento.icono;
 
   return (
     <motion.article
       initial={{
         opacity: 0,
-        y: 35,
+        y: 30,
       }}
       whileInView={{
         opacity: 1,
@@ -115,24 +131,21 @@ const TarjetaItinerario = ({ evento, index }) => {
       }}
       transition={{
         duration: 0.8,
-        delay: Math.min(index * 0.08, 0.35),
+        delay: Math.min(index * 0.1, 0.3),
         ease: [0.22, 1, 0.36, 1],
       }}
       className="
-        relative
-        w-full
+        relative w-full
         overflow-hidden
         border
-        bg-[#F8F2F0]
-        px-6
-        py-8
+        px-6 py-9
         text-center
-        shadow-[0_12px_35px_rgba(102,84,90,0.10)]
-        sm:px-10
-        sm:py-10
+        sm:px-10 sm:py-11
       "
       style={{
-        borderColor: "rgba(184,154,106,0.35)",
+        backgroundColor: colores.marfil,
+        borderColor: "rgba(181,140,80,0.55)",
+        boxShadow: "0 12px 28px rgba(66,41,30,0.08)",
       }}
     >
       {/* MARCO INTERIOR */}
@@ -140,46 +153,55 @@ const TarjetaItinerario = ({ evento, index }) => {
       <div
         className="
           pointer-events-none
-          absolute
-          inset-2
+          absolute inset-2
           border
           sm:inset-3
         "
         style={{
-          borderColor: "rgba(232,207,203,0.65)",
+          borderColor: "rgba(181,140,80,0.24)",
+        }}
+      />
+
+      {/* DETALLE SUPERIOR */}
+
+      <div
+        className="
+          absolute left-1/2 top-0
+          h-[3px] w-24
+          -translate-x-1/2
+        "
+        style={{
+          backgroundColor: colores.dorado,
         }}
       />
 
       {/* CONTENIDO */}
 
-      <div className="relative z-10 flex flex-col items-center">
-
-        {/* ICONO */}
+      <div
+        className="
+          relative z-10
+          flex flex-col
+          items-center
+        "
+      >
+        {/* ÍCONO */}
 
         <div
           className="
-            mb-5
-            flex
-            h-16
-            w-16
-            items-center
-            justify-center
-            rounded-full
-            border
-            sm:h-20
-            sm:w-20
+            mb-6 flex
+            h-[76px] w-[76px]
+            items-center justify-center
+            rounded-full border
           "
           style={{
-            backgroundColor: "rgba(232,207,203,0.35)",
-            borderColor: "rgba(184,154,106,0.45)",
+            backgroundColor: colores.beige,
+            borderColor: "rgba(181,140,80,0.55)",
           }}
         >
           <Icono
-            size={32}
+            size={33}
             strokeWidth={1.3}
-            style={{
-              color: colores.rosaAntiguo,
-            }}
+            color={colores.cafe}
           />
         </div>
 
@@ -187,15 +209,13 @@ const TarjetaItinerario = ({ evento, index }) => {
 
         <p
           className="
-            font-sans
-            text-xs
-            font-semibold
+            text-xs font-semibold
             uppercase
-            tracking-[0.2em]
+            tracking-[0.25em]
             sm:text-sm
           "
           style={{
-            color: colores.champagne,
+            color: colores.dorado,
           }}
         >
           {evento.hora}
@@ -205,16 +225,14 @@ const TarjetaItinerario = ({ evento, index }) => {
 
         <h3
           className="
-            mt-4
-            font-serif
-            text-2xl
-            font-normal
-            leading-snug
-            sm:text-3xl
+            mt-4 font-serif
+            text-[clamp(1.8rem,5vw,2.6rem)]
+            leading-tight
           "
           style={{
-            fontFamily: '"Playfair Display", Georgia, serif',
-            color: colores.ciruela,
+            fontFamily:
+              '"Playfair Display", Georgia, serif',
+            color: colores.cafe,
           }}
         >
           {evento.titulo}
@@ -223,9 +241,9 @@ const TarjetaItinerario = ({ evento, index }) => {
         {/* DIVISOR */}
 
         <div
-          className="my-5 h-px w-12"
+          className="my-5 h-px w-14"
           style={{
-            backgroundColor: colores.champagne,
+            backgroundColor: colores.dorado,
           }}
         />
 
@@ -233,25 +251,36 @@ const TarjetaItinerario = ({ evento, index }) => {
 
         <p
           className="
-            max-w-xs
-            font-serif
-            text-sm
-            italic
+            max-w-xs font-serif
+            text-sm italic
             leading-relaxed
             sm:text-base
           "
           style={{
-            fontFamily: '"Playfair Display", Georgia, serif',
-            color: colores.ciruela,
-            opacity: 0.85,
+            fontFamily:
+              '"Playfair Display", Georgia, serif',
+            color: colores.cafeClaro,
           }}
         >
           {evento.descripcion}
         </p>
       </div>
+
+      {/* DETALLE INFERIOR */}
+
+      <div
+        className="
+          absolute bottom-0 left-1/2
+          h-[3px] w-24
+          -translate-x-1/2
+        "
+        style={{
+          backgroundColor: colores.dorado,
+        }}
+      />
     </motion.article>
   );
-};
+}
 
 // ==========================================
 // COMPONENTE PRINCIPAL
@@ -262,57 +291,68 @@ export default function Itinerario2() {
     <section
       id="itinerario"
       className="
-        relative
-        w-full
-        overflow-hidden
-        bg-[#E8CFCB]
-        px-5
-        py-20
-        sm:px-8
-        sm:py-28
+        relative isolate
+        w-full overflow-hidden
+        px-5 py-24
+        sm:px-8 sm:py-32
       "
+      style={{
+        backgroundColor: colores.beige,
+      }}
     >
-      {/* DECORACIÓN DE FONDO */}
+      {/* ======================================
+          FONDO BEIGE SÓLIDO
+          SIN DEGRADADOS NI DIFUMINADOS
+      ====================================== */}
+
+      {/* MARCOS DECORATIVOS */}
 
       <div
         className="
           pointer-events-none
-          absolute
-          -left-32
-          top-20
-          h-80
-          w-80
-          rounded-full
+          absolute inset-4
           border
+          sm:inset-8
         "
         style={{
-          borderColor: "rgba(184,154,106,0.2)",
+          borderColor: "rgba(181,140,80,0.30)",
+        }}
+      />
+
+      {/* ESQUINAS DECORATIVAS */}
+
+      <div
+        className="
+          pointer-events-none
+          absolute left-7 top-7
+          h-12 w-12
+          border-l border-t
+          sm:left-12 sm:top-12
+        "
+        style={{
+          borderColor: colores.dorado,
         }}
       />
 
       <div
         className="
           pointer-events-none
-          absolute
-          -right-32
-          bottom-20
-          h-80
-          w-80
-          rounded-full
-          border
+          absolute bottom-7 right-7
+          h-12 w-12
+          border-b border-r
+          sm:bottom-12 sm:right-12
         "
         style={{
-          borderColor: "rgba(184,154,106,0.2)",
+          borderColor: colores.dorado,
         }}
       />
 
-      {/* CONTENEDOR */}
+      {/* ======================================
+          CONTENEDOR
+      ====================================== */}
 
       <div className="relative z-10 mx-auto max-w-5xl">
-
-        {/* ======================================
-            ENCABEZADO
-        ====================================== */}
+        {/* ENCABEZADO */}
 
         <motion.div
           variants={fadeUp}
@@ -320,86 +360,45 @@ export default function Itinerario2() {
           whileInView="visible"
           viewport={{
             once: true,
+            amount: 0.2,
           }}
           className="mb-16 text-center"
         >
-          {/* ORNAMENTO SUPERIOR */}
-
-          <div className="mb-6 flex items-center justify-center gap-4">
-            <span
-              className="h-px w-12"
-              style={{
-                backgroundColor: colores.champagne,
-              }}
-            />
-
-            <Sparkles
-              size={23}
-              strokeWidth={1.2}
-              style={{
-                color: colores.champagne,
-              }}
-            />
-
-            <span
-              className="h-px w-12"
-              style={{
-                backgroundColor: colores.champagne,
-              }}
-            />
-          </div>
-
-          {/* SUBTÍTULO */}
-
-          <p
-            className="
-              font-sans
-              text-xs
-              font-semibold
-              uppercase
-              tracking-[0.3em]
-              sm:text-sm
-            "
-            style={{
-              color: colores.ciruela,
-            }}
-          >
-            Una noche llena de magia
-          </p>
+          <Ornamento />
+      
 
           {/* TÍTULO */}
 
           <h2
             className="
-              mt-5
-              font-serif
-              text-4xl
-              font-normal
-              sm:text-5xl
-              md:text-6xl
+              mt-5 font-serif
+              text-[clamp(2.8rem,8vw,5rem)]
+              leading-tight
             "
             style={{
-              fontFamily: '"Playfair Display", Georgia, serif',
-              color: colores.ciruela,
+              fontFamily:
+                '"Playfair Display", Georgia, serif',
+              color: colores.cafe,
             }}
           >
-            Nuestro
+            Mi
             <br />
-            <em
+            <span
+              className="italic"
               style={{
-                color: colores.rosaAntiguo,
+                color: colores.dorado,
               }}
             >
               Itinerario
-            </em>
+            </span>
           </h2>
 
           {/* DIVISOR */}
 
           <div
-            className="mx-auto mt-7 h-px w-24"
+            className="mx-auto mt-8 h-px w-28"
             style={{
-              backgroundColor: colores.champagne,
+              backgroundColor: colores.dorado,
             }}
           />
 
@@ -407,17 +406,16 @@ export default function Itinerario2() {
 
           <p
             className="
-              mx-auto
-              mt-7
+              mx-auto mt-7
               max-w-lg
-              font-serif
-              text-base
+              font-serif text-base
               leading-relaxed
               sm:text-lg
             "
             style={{
-              fontFamily: '"Playfair Display", Georgia, serif',
-              color: colores.ciruela,
+              fontFamily:
+                '"Playfair Display", Georgia, serif',
+              color: colores.cafeClaro,
             }}
           >
             Cada momento de esta noche será
@@ -430,23 +428,19 @@ export default function Itinerario2() {
         ====================================== */}
 
         <div className="relative">
-
-          {/* LÍNEA VERTICAL CENTRAL - COMPUTADORA */}
+          {/* LÍNEA VERTICAL - COMPUTADORA */}
 
           <div
             className="
               pointer-events-none
-              absolute
-              bottom-0
-              left-1/2
-              top-0
-              hidden
-              w-px
+              absolute bottom-0
+              left-1/2 top-0
+              hidden w-px
               -translate-x-1/2
               md:block
             "
             style={{
-              backgroundColor: "rgba(184,154,106,0.65)",
+              backgroundColor: colores.dorado,
             }}
           />
 
@@ -455,15 +449,13 @@ export default function Itinerario2() {
           <div
             className="
               pointer-events-none
-              absolute
-              bottom-0
-              left-4
-              top-0
+              absolute bottom-0
+              left-4 top-0
               w-px
               md:hidden
             "
             style={{
-              backgroundColor: "rgba(184,154,106,0.65)",
+              backgroundColor: colores.dorado,
             }}
           />
 
@@ -477,33 +469,26 @@ export default function Itinerario2() {
                 <div
                   key={evento.id}
                   className="
-                    relative
-                    grid
+                    relative grid
                     grid-cols-[32px_minmax(0,1fr)]
-                    items-center
-                    gap-4
+                    items-center gap-4
                     md:grid-cols-[minmax(0,1fr)_48px_minmax(0,1fr)]
                     md:gap-5
                   "
                 >
-                  {/* PUNTO CENTRAL */}
+                  {/* PUNTO DE LA LÍNEA */}
 
                   <div
                     className="
-                      relative
-                      z-10
-                      col-start-1
-                      row-start-1
-                      mx-auto
-                      h-4
-                      w-4
-                      rotate-45
-                      border-2
-                      bg-[#E8CFCB]
+                      relative z-10
+                      col-start-1 row-start-1
+                      mx-auto h-4 w-4
+                      rotate-45 border-2
                       md:col-start-2
                     "
                     style={{
-                      borderColor: colores.champagne,
+                      backgroundColor: colores.beige,
+                      borderColor: colores.dorado,
                     }}
                   />
 
@@ -511,8 +496,7 @@ export default function Itinerario2() {
 
                   <div
                     className={`
-                      col-start-2
-                      row-start-1
+                      col-start-2 row-start-1
                       min-w-0
                       ${
                         esIzquierda
@@ -540,52 +524,46 @@ export default function Itinerario2() {
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
-          viewport={{
-            once: true,
-          }}
+          viewport={{ once: true }}
           className="mt-16 text-center"
         >
-          <div className="mb-5 flex items-center justify-center gap-4">
+          <div className="mb-6 flex items-center justify-center gap-4">
             <span
-              className="h-px w-10"
+              className="h-px w-12"
               style={{
-                backgroundColor: colores.champagne,
+                backgroundColor: colores.dorado,
               }}
             />
 
             <Heart
               size={20}
-              strokeWidth={1.3}
-              style={{
-                color: colores.rosaAntiguo,
-              }}
+              strokeWidth={1.2}
+              color={colores.cafe}
             />
 
             <span
-              className="h-px w-10"
+              className="h-px w-12"
               style={{
-                backgroundColor: colores.champagne,
+                backgroundColor: colores.dorado,
               }}
             />
           </div>
 
           <p
             className="
-              font-serif
-              text-lg
-              italic
-              leading-relaxed
+              font-serif text-lg
+              italic leading-relaxed
               sm:text-xl
             "
             style={{
-              fontFamily: '"Playfair Display", Georgia, serif',
-              color: colores.ciruela,
+              fontFamily:
+                '"Playfair Display", Georgia, serif',
+              color: colores.cafe,
             }}
           >
             ¡Prepárate para vivir una noche inolvidable!
           </p>
         </motion.div>
-
       </div>
     </section>
   );
