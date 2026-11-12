@@ -5,19 +5,19 @@ import {
   Heart,
   Send,
   Users,
-  UserRound,
   MessageCircleHeart,
   Sparkles,
   Check,
   X,
   Crown,
+  Ticket,
+  AlertCircle,
 } from "lucide-react";
 
 // ==========================================
-// CONFIGURACIÓN EDITABLE - WEDLY
+// CONFIGURACIÓN - WEDLY
 // ==========================================
 
-// México: código de país 52 + número de 10 dígitos
 const NUMERO_WHATSAPP = "525568804612";
 
 const datosEvento = {
@@ -26,7 +26,7 @@ const datosEvento = {
 };
 
 // ==========================================
-// PALETA CHAMPAGNE · DORADO · BEIGE · CAFÉ
+// PALETA DE COLORES
 // ==========================================
 
 const colores = {
@@ -38,6 +38,91 @@ const colores = {
   doradoClaro: "#C9A15F",
   marfil: "#FFF8ED",
 };
+
+// ==========================================
+// LEER DATOS DEL GENERADOR
+//
+// Formato:
+// {
+//   n: "Familia Hernández",
+//   p: 4,
+//   r: "identificador-aleatorio"
+// }
+// ==========================================
+
+function obtenerDatosInvitacion() {
+  const resultadoInvalido = {
+    valido: false,
+    nombreInvitado: "",
+    pases: 0,
+    id: "",
+  };
+
+  try {
+    const parametros = new URLSearchParams(
+      window.location.search
+    );
+
+    const id = parametros.get("id");
+
+    if (!id) {
+      return resultadoInvalido;
+    }
+
+    // Convertir Base64URL a Base64
+    const base64 = id
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+
+    const relleno = "=".repeat(
+      (4 - (base64.length % 4)) % 4
+    );
+
+    const binario = atob(base64 + relleno);
+
+    // Decodificar UTF-8
+    // Compatible con acentos y ñ
+    const bytes = Uint8Array.from(
+      binario,
+      (caracter) => caracter.charCodeAt(0)
+    );
+
+    const texto = new TextDecoder().decode(bytes);
+
+    const datos = JSON.parse(texto);
+
+    const nombreInvitado = datos.n;
+    const pases = datos.p;
+    const identificador = datos.r;
+
+    // Validar datos
+    if (
+      typeof nombreInvitado !== "string" ||
+      !nombreInvitado.trim() ||
+      !Number.isInteger(pases) ||
+      pases < 1 ||
+      pases > 100 ||
+      typeof identificador !== "string" ||
+      !identificador.trim()
+    ) {
+      return resultadoInvalido;
+    }
+
+    return {
+      valido: true,
+      nombreInvitado: nombreInvitado.trim(),
+      pases,
+      id,
+    };
+  } catch (error) {
+    console.error(
+      "No se pudo leer la invitación:",
+      error
+    );
+
+    return resultadoInvalido;
+  }
+}
 
 // ==========================================
 // ANIMACIONES
@@ -93,11 +178,42 @@ function Ornamento() {
 // ==========================================
 
 export default function ConfirmacionAsistencia() {
-  const [nombre, setNombre] = useState("");
+  // Leer datos del enlace
+  const [datosInvitacion] = useState(
+    obtenerDatosInvitacion
+  );
+
+  // Estados del formulario
   const [asistencia, setAsistencia] = useState("");
   const [invitados, setInvitados] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [confirmacion, setConfirmacion] = useState("");
+
+  // Datos del generador
+  const enlaceValido = datosInvitacion.valido;
+
+  const nombreInvitado =
+    datosInvitacion.nombreInvitado;
+
+  const pasesAutorizados =
+    datosInvitacion.pases;
+
+  // ==========================================
+  // OPCIONES DE PASES
+  //
+  // Si hay 4 pases:
+  // [1, 2, 3, 4]
+  //
+  // Si hay 2 pases:
+  // [1, 2]
+  // ==========================================
+
+  const opcionesPases = enlaceValido
+    ? Array.from(
+        { length: pasesAutorizados },
+        (_, index) => index + 1
+      )
+    : [];
 
   // ==========================================
   // SELECCIONAR ASISTENCIA
@@ -110,32 +226,57 @@ export default function ConfirmacionAsistencia() {
     if (valor === "No asistiré") {
       setInvitados("");
     }
+
+    if (valor === "Sí asistiré") {
+      setInvitados((anterior) => {
+        const numero = Number(anterior);
+
+        if (
+          Number.isInteger(numero) &&
+          numero >= 1 &&
+          numero <= pasesAutorizados
+        ) {
+          return anterior;
+        }
+
+        return "1";
+      });
+    }
   };
 
   // ==========================================
-  // ENVIAR CONFIRMACIÓN POR WHATSAPP
+  // ENVIAR CONFIRMACIÓN
   // ==========================================
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!nombre.trim() || !asistencia) {
+    if (!enlaceValido) {
       setConfirmacion(
-        "Por favor, escribe tu nombre y selecciona si asistirás."
+        "Esta invitación no contiene pases válidos."
       );
       return;
     }
 
+    if (!asistencia) {
+      setConfirmacion(
+        "Selecciona si asistirás a la celebración."
+      );
+      return;
+    }
+
+    let cantidadConfirmada = 0;
+
     if (asistencia === "Sí asistiré") {
-      const cantidad = Number(invitados);
+      cantidadConfirmada = Number(invitados);
 
       if (
-        !invitados ||
-        !Number.isInteger(cantidad) ||
-        cantidad < 1
+        !Number.isInteger(cantidadConfirmada) ||
+        cantidadConfirmada < 1 ||
+        cantidadConfirmada > pasesAutorizados
       ) {
         setConfirmacion(
-          "Por favor, indica un número válido de personas."
+          `Selecciona una cantidad entre 1 y ${pasesAutorizados}.`
         );
         return;
       }
@@ -143,18 +284,24 @@ export default function ConfirmacionAsistencia() {
 
     setConfirmacion("");
 
+    // ==========================================
+    // MENSAJE DE WHATSAPP
+    // ==========================================
+
     const textoWhatsApp = [
       "✨ *CONFIRMACIÓN DE ASISTENCIA*",
       `👑 *XV AÑOS DE ${datosEvento.quinceanera.toUpperCase()}*`,
       "",
-      `👤 *Nombre:* ${nombre.trim()}`,
-      `💌 *Asistencia:* ${asistencia}`,
-      `👥 *Número de personas:* ${
-        asistencia === "Sí asistiré" ? invitados : "0"
-      }`,
+      `💌 *Invitación para:* ${nombreInvitado}`,
       "",
-      "💖 *Mensaje para Camila:*",
+      `🎟️ *Pases autorizados:* ${pasesAutorizados}`,
+      `💖 *Asistencia:* ${asistencia}`,
+      `👥 *Personas que asistirán:* ${cantidadConfirmada}`,
+      "",
+      `💌 *Mensaje para ${datosEvento.quinceanera}:*`,
       mensaje.trim() || "Sin mensaje adicional",
+      "",
+      `🔖 *ID de invitación:* ${datosInvitacion.id}`,
     ].join("\n");
 
     const urlWhatsApp =
@@ -170,7 +317,7 @@ export default function ConfirmacionAsistencia() {
   };
 
   // ==========================================
-  // ESTILO DE CAMPOS
+  // ESTILOS
   // ==========================================
 
   const estiloCampo = {
@@ -179,8 +326,11 @@ export default function ConfirmacionAsistencia() {
     color: colores.cafe,
   };
 
+  const fuenteElegante =
+    '"Playfair Display", Georgia, serif';
+
   // ==========================================
-  // COMPONENTE VISUAL
+  // RENDER
   // ==========================================
 
   return (
@@ -197,25 +347,22 @@ export default function ConfirmacionAsistencia() {
       }}
     >
       {/* ======================================
-          FONDO BEIGE SÓLIDO
-          SIN DEGRADADOS NI DIFUMINADOS
+          MARCO EXTERIOR
       ====================================== */}
-
-      {/* MARCO EXTERIOR */}
 
       <div
         className="
           pointer-events-none
-          absolute inset-4
-          border
+          absolute inset-4 border
           sm:inset-8
         "
         style={{
-          borderColor: "rgba(181,140,80,0.30)",
+          borderColor:
+            "rgba(181,140,80,0.30)",
         }}
       />
 
-      {/* ESQUINAS DECORATIVAS */}
+      {/* ESQUINA SUPERIOR */}
 
       <div
         className="
@@ -230,6 +377,8 @@ export default function ConfirmacionAsistencia() {
         }}
       />
 
+      {/* ESQUINA INFERIOR */}
+
       <div
         className="
           pointer-events-none
@@ -242,10 +391,6 @@ export default function ConfirmacionAsistencia() {
           borderColor: colores.dorado,
         }}
       />
-
-      {/* ======================================
-          CONTENEDOR PRINCIPAL
-      ====================================== */}
 
       <div className="relative z-10 mx-auto max-w-3xl">
         {/* ======================================
@@ -264,10 +409,6 @@ export default function ConfirmacionAsistencia() {
         >
           <Ornamento />
 
-
-
-          {/* TÍTULO */}
-
           <h2
             className="
               mt-5 font-serif
@@ -275,13 +416,13 @@ export default function ConfirmacionAsistencia() {
               leading-tight
             "
             style={{
-              fontFamily:
-                '"Playfair Display", Georgia, serif',
+              fontFamily: fuenteElegante,
               color: colores.cafe,
             }}
           >
             Confirma tu
             <br />
+
             <span
               className="italic"
               style={{
@@ -295,7 +436,10 @@ export default function ConfirmacionAsistencia() {
           {/* DIVISOR */}
 
           <div
-            className="mx-auto my-8 h-px w-28"
+            className="
+              mx-auto my-8
+              h-px w-28
+            "
             style={{
               backgroundColor: colores.dorado,
             }}
@@ -311,17 +455,17 @@ export default function ConfirmacionAsistencia() {
               sm:text-lg
             "
             style={{
-              fontFamily:
-                '"Playfair Display", Georgia, serif',
+              fontFamily: fuenteElegante,
               color: colores.cafeClaro,
             }}
           >
             Tu presencia hará que mis XV años
             sean todavía más especiales.
-            ¡Me encantaría compartir esta noche contigo!
+            ¡Me encantaría compartir esta
+            noche contigo!
           </p>
 
-          {/* NOMBRE DE Camila */}
+          {/* NOMBRE QUINCEAÑERA */}
 
           <p
             className="
@@ -330,8 +474,7 @@ export default function ConfirmacionAsistencia() {
               sm:text-3xl
             "
             style={{
-              fontFamily:
-                '"Playfair Display", Georgia, serif',
+              fontFamily: fuenteElegante,
               color: colores.cafe,
             }}
           >
@@ -340,7 +483,7 @@ export default function ConfirmacionAsistencia() {
         </motion.div>
 
         {/* ======================================
-            FORMULARIO
+            TARJETA PRINCIPAL
         ====================================== */}
 
         <motion.div
@@ -353,13 +496,13 @@ export default function ConfirmacionAsistencia() {
           }}
           className="
             relative overflow-hidden
-            border
-            px-6 py-10
+            border px-6 py-10
             sm:px-12 sm:py-14
           "
           style={{
             backgroundColor: colores.marfil,
-            borderColor: "rgba(181,140,80,0.55)",
+            borderColor:
+              "rgba(181,140,80,0.55)",
             boxShadow:
               "0 16px 38px rgba(66,41,30,0.09)",
           }}
@@ -369,8 +512,7 @@ export default function ConfirmacionAsistencia() {
           <div
             className="
               pointer-events-none
-              absolute inset-2
-              border
+              absolute inset-2 border
               sm:inset-3
             "
             style={{
@@ -395,7 +537,7 @@ export default function ConfirmacionAsistencia() {
           <div className="relative z-10">
             {/* CORONA */}
 
-            <div className="mb-8 flex justify-center">
+            <div className="mb-7 flex justify-center">
               <div
                 className="
                   flex h-16 w-16
@@ -417,381 +559,518 @@ export default function ConfirmacionAsistencia() {
             </div>
 
             {/* ======================================
-                FORMULARIO
+                INFORMACIÓN DE INVITACIÓN
             ====================================== */}
 
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-7"
-            >
-              {/* NOMBRE */}
+            {enlaceValido ? (
+              <div
+                className="
+                  mb-9 border
+                  px-5 py-7
+                  text-center
+                "
+                style={{
+                  backgroundColor: colores.beige,
+                  borderColor:
+                    "rgba(181,140,80,0.5)",
+                }}
+              >
+                {/* DESTINATARIO */}
 
-              <div>
-                <label
-                  htmlFor="nombre-confirmacion"
-                  className="
-                    mb-3 flex
-                    items-center gap-2
-                    text-xs font-semibold
-                    uppercase tracking-[0.15em]
-                  "
-                  style={{
-                    color: colores.cafe,
-                  }}
-                >
-                  <UserRound
-                    size={17}
-                    strokeWidth={1.5}
-                    color={colores.dorado}
-                  />
-
-                  Tu nombre
-                </label>
-
-                <input
-                  id="nombre-confirmacion"
-                  type="text"
-                  placeholder="Nombre y apellido"
-                  value={nombre}
-                  onChange={(e) => {
-                    setNombre(e.target.value);
-                    setConfirmacion("");
-                  }}
-                  required
-                  className="
-                    w-full rounded-lg
-                    border px-5 py-4
-                    outline-none
-                    transition-colors
-                    duration-300
-                    placeholder:text-[#75533D]/50
-                    focus:border-[#B58C50]
-                  "
-                  style={estiloCampo}
-                />
-              </div>
-
-              {/* ======================================
-                  ASISTENCIA
-              ====================================== */}
-
-              <div>
                 <p
                   className="
-                    mb-4 text-xs
+                    text-[10px]
                     font-semibold uppercase
-                    tracking-[0.15em]
+                    tracking-[0.2em]
                   "
                   style={{
+                    color: colores.cafeClaro,
+                  }}
+                >
+                  Invitación especial para
+                </p>
+
+                <p
+                  className="
+                    mt-3 break-words
+                    font-serif text-2xl
+                    italic sm:text-3xl
+                  "
+                  style={{
+                    fontFamily: fuenteElegante,
                     color: colores.cafe,
                   }}
                 >
-                  ¿Nos acompañarás?
+                  {nombreInvitado}
                 </p>
 
-                <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                  {/* SÍ ASISTIRÉ */}
+                {/* DIVISOR */}
 
-                  <motion.button
-                    type="button"
-                    onClick={() =>
-                      seleccionarAsistencia("Sí asistiré")
-                    }
-                    whileTap={{
-                      scale: 0.97,
-                    }}
-                    aria-pressed={
-                      asistencia === "Sí asistiré"
-                    }
-                    className="
-                      flex min-h-[64px]
-                      items-center justify-center
-                      gap-2 rounded-lg
-                      border px-3 py-4
-                      text-sm font-medium
-                      transition-all duration-300
-                      sm:text-base
-                    "
-                    style={{
-                      backgroundColor:
-                        asistencia === "Sí asistiré"
-                          ? colores.cafe
-                          : colores.beige,
-                      borderColor:
-                        asistencia === "Sí asistiré"
-                          ? colores.cafe
-                          : "rgba(181,140,80,0.5)",
-                      color:
-                        asistencia === "Sí asistiré"
-                          ? colores.marfil
-                          : colores.cafe,
-                    }}
-                  >
-                    <Check
-                      size={18}
-                      strokeWidth={1.7}
-                    />
+                <div
+                  className="
+                    mx-auto my-6
+                    h-px w-24
+                  "
+                  style={{
+                    backgroundColor:
+                      "rgba(181,140,80,0.6)",
+                  }}
+                />
 
-                    Sí asistiré
-                  </motion.button>
+                {/* PASES */}
 
-                  {/* NO ASISTIRÉ */}
+                <Ticket
+                  size={29}
+                  strokeWidth={1.3}
+                  color={colores.dorado}
+                  className="mx-auto"
+                />
 
-                  <motion.button
-                    type="button"
-                    onClick={() =>
-                      seleccionarAsistencia("No asistiré")
-                    }
-                    whileTap={{
-                      scale: 0.97,
-                    }}
-                    aria-pressed={
-                      asistencia === "No asistiré"
-                    }
-                    className="
-                      flex min-h-[64px]
-                      items-center justify-center
-                      gap-2 rounded-lg
-                      border px-3 py-4
-                      text-sm font-medium
-                      transition-all duration-300
-                      sm:text-base
-                    "
-                    style={{
-                      backgroundColor:
-                        asistencia === "No asistiré"
-                          ? colores.cafe
-                          : colores.beige,
-                      borderColor:
-                        asistencia === "No asistiré"
-                          ? colores.cafe
-                          : "rgba(181,140,80,0.5)",
-                      color:
-                        asistencia === "No asistiré"
-                          ? colores.marfil
-                          : colores.cafe,
-                    }}
-                  >
-                    <X
-                      size={18}
-                      strokeWidth={1.7}
-                    />
+                <p
+                  className="
+                    mt-3 text-xs
+                    font-semibold uppercase
+                    tracking-[0.18em]
+                  "
+                  style={{
+                    color: colores.cafeClaro,
+                  }}
+                >
+                  Pases reservados para ti
+                </p>
 
-                    No asistiré
-                  </motion.button>
-                </div>
+                <p
+                  className="
+                    mt-3 font-serif
+                    text-4xl
+                  "
+                  style={{
+                    fontFamily: fuenteElegante,
+                    color: colores.cafe,
+                  }}
+                >
+                  {pasesAutorizados}
+                </p>
+
+                <p
+                  className="
+                    mt-2 text-sm
+                  "
+                  style={{
+                    color: colores.cafeClaro,
+                  }}
+                >
+                  {pasesAutorizados === 1
+                    ? "Pase autorizado"
+                    : "Pases autorizados"}
+                </p>
               </div>
+            ) : (
+              <div
+                role="alert"
+                className="
+                  mb-9 border
+                  px-5 py-6
+                  text-center
+                "
+                style={{
+                  backgroundColor: "#F5E6DF",
+                  borderColor: "#C58E7D",
+                }}
+              >
+                <AlertCircle
+                  size={28}
+                  color="#9B382F"
+                  className="mx-auto"
+                />
 
-              {/* ======================================
-                  NÚMERO DE PERSONAS
-              ====================================== */}
+                <p
+                  className="
+                    mt-3 text-sm
+                    font-semibold
+                  "
+                  style={{
+                    color: "#9B382F",
+                  }}
+                >
+                  Invitación sin pases válidos
+                </p>
 
-              <AnimatePresence>
-                {asistencia === "Sí asistiré" && (
-                  <motion.div
-                    initial={{
-                      opacity: 0,
-                      height: 0,
-                      y: -10,
+                <p
+                  className="
+                    mt-2 text-sm
+                    leading-relaxed
+                  "
+                  style={{
+                    color: colores.cafeClaro,
+                  }}
+                >
+                  Solicita un enlace actualizado
+                  para confirmar tu asistencia.
+                </p>
+              </div>
+            )}
+
+            {/* ======================================
+                FORMULARIO DE CONFIRMACIÓN
+            ====================================== */}
+
+            {enlaceValido && (
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-7"
+              >
+                {/* ======================================
+                    SELECCIONAR ASISTENCIA
+                ====================================== */}
+
+                <div>
+                  <p
+                    className="
+                      mb-4 text-xs
+                      font-semibold uppercase
+                      tracking-[0.15em]
+                    "
+                    style={{
+                      color: colores.cafe,
                     }}
-                    animate={{
-                      opacity: 1,
-                      height: "auto",
-                      y: 0,
-                    }}
-                    exit={{
-                      opacity: 0,
-                      height: 0,
-                      y: -10,
-                    }}
-                    transition={{
-                      duration: 0.35,
-                    }}
-                    className="overflow-hidden"
                   >
-                    <label
-                      htmlFor="invitados-confirmacion"
-                      className="
-                        mb-3 flex
-                        items-center gap-2
-                        text-xs font-semibold
-                        uppercase tracking-[0.15em]
-                      "
-                      style={{
-                        color: colores.cafe,
-                      }}
-                    >
-                      <Users
-                        size={18}
-                        strokeWidth={1.5}
-                        color={colores.dorado}
-                      />
+                    ¿Nos acompañarás?
+                  </p>
 
-                      Número de personas
-                    </label>
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                    {/* SÍ ASISTIRÉ */}
 
-                    <input
-                      id="invitados-confirmacion"
-                      type="number"
-                      min="1"
-                      step="1"
-                      placeholder="¿Cuántas personas asistirán?"
-                      value={invitados}
-                      onChange={(e) => {
-                        setInvitados(e.target.value);
-                        setConfirmacion("");
+                    <motion.button
+                      type="button"
+                      onClick={() =>
+                        seleccionarAsistencia(
+                          "Sí asistiré"
+                        )
+                      }
+                      whileTap={{
+                        scale: 0.97,
                       }}
-                      required={
+                      aria-pressed={
                         asistencia === "Sí asistiré"
                       }
                       className="
-                        w-full rounded-lg
-                        border px-5 py-4
-                        outline-none
-                        transition-colors
-                        duration-300
-                        placeholder:text-[#75533D]/50
-                        focus:border-[#B58C50]
-                      "
-                      style={estiloCampo}
-                    />
-
-                    <p
-                      className="
-                        mt-2 text-xs
-                        leading-relaxed
+                        flex min-h-[64px]
+                        items-center justify-center
+                        gap-2 rounded-lg
+                        border px-3 py-4
+                        text-sm font-medium
+                        transition-all duration-300
+                        sm:text-base
                       "
                       style={{
-                        color: colores.cafeClaro,
+                        backgroundColor:
+                          asistencia === "Sí asistiré"
+                            ? colores.cafe
+                            : colores.beige,
+                        borderColor:
+                          asistencia === "Sí asistiré"
+                            ? colores.cafe
+                            : "rgba(181,140,80,0.5)",
+                        color:
+                          asistencia === "Sí asistiré"
+                            ? colores.marfil
+                            : colores.cafe,
                       }}
                     >
-                      Incluye tu asistencia dentro del total.
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                      <Check
+                        size={18}
+                        strokeWidth={1.7}
+                      />
 
-              {/* ======================================
-                  MENSAJE PARA Camila
-              ====================================== */}
+                      Sí asistiré
+                    </motion.button>
 
-              <div>
-                <label
-                  htmlFor="mensaje-confirmacion"
+                    {/* NO ASISTIRÉ */}
+
+                    <motion.button
+                      type="button"
+                      onClick={() =>
+                        seleccionarAsistencia(
+                          "No asistiré"
+                        )
+                      }
+                      whileTap={{
+                        scale: 0.97,
+                      }}
+                      aria-pressed={
+                        asistencia === "No asistiré"
+                      }
+                      className="
+                        flex min-h-[64px]
+                        items-center justify-center
+                        gap-2 rounded-lg
+                        border px-3 py-4
+                        text-sm font-medium
+                        transition-all duration-300
+                        sm:text-base
+                      "
+                      style={{
+                        backgroundColor:
+                          asistencia === "No asistiré"
+                            ? colores.cafe
+                            : colores.beige,
+                        borderColor:
+                          asistencia === "No asistiré"
+                            ? colores.cafe
+                            : "rgba(181,140,80,0.5)",
+                        color:
+                          asistencia === "No asistiré"
+                            ? colores.marfil
+                            : colores.cafe,
+                      }}
+                    >
+                      <X
+                        size={18}
+                        strokeWidth={1.7}
+                      />
+
+                      No asistiré
+                    </motion.button>
+                  </div>
+                </div>
+
+                {/* ======================================
+                    SELECCIÓN DE PERSONAS
+                ====================================== */}
+
+                <AnimatePresence>
+                  {asistencia === "Sí asistiré" && (
+                    <motion.div
+                      initial={{
+                        opacity: 0,
+                        height: 0,
+                        y: -10,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        height: "auto",
+                        y: 0,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        height: 0,
+                        y: -10,
+                      }}
+                      transition={{
+                        duration: 0.35,
+                      }}
+                      className="overflow-hidden"
+                    >
+                      <label
+                        htmlFor="invitados-confirmacion"
+                        className="
+                          mb-3 flex
+                          items-center gap-2
+                          text-xs font-semibold
+                          uppercase tracking-[0.15em]
+                        "
+                        style={{
+                          color: colores.cafe,
+                        }}
+                      >
+                        <Users
+                          size={18}
+                          strokeWidth={1.5}
+                          color={colores.dorado}
+                        />
+
+                        Personas que asistirán
+                      </label>
+
+                      {/* ======================================
+                          SELECTOR LIMITADO
+                      ====================================== */}
+
+                      <select
+                        id="invitados-confirmacion"
+                        value={invitados}
+                        onChange={(e) => {
+                          setInvitados(e.target.value);
+                          setConfirmacion("");
+                        }}
+                        required
+                        className="
+                          w-full rounded-lg
+                          border px-5 py-4
+                          text-base outline-none
+                          transition-colors
+                          duration-300
+                          focus:border-[#B58C50]
+                          cursor-pointer
+                        "
+                        style={estiloCampo}
+                      >
+                        <option value="" disabled>
+                          Selecciona cuántas personas asistirán
+                        </option>
+
+                        {opcionesPases.map((numero) => (
+                          <option
+                            key={numero}
+                            value={String(numero)}
+                          >
+                            {numero}{" "}
+                            {numero === 1
+                              ? "persona"
+                              : "personas"}
+                          </option>
+                        ))}
+                      </select>
+
+                      {/* TEXTO DE APOYO */}
+
+                      <p
+                        className="
+                          mt-3 text-xs
+                          leading-relaxed
+                        "
+                        style={{
+                          color: colores.cafeClaro,
+                        }}
+                      >
+                        Puedes confirmar hasta{" "}
+                        <strong>
+                          {pasesAutorizados}{" "}
+                          {pasesAutorizados === 1
+                            ? "persona"
+                            : "personas"}
+                        </strong>.
+                        {" "}Incluye tu asistencia
+                        dentro del total.
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* ======================================
+                    MENSAJE PARA CAMILA
+                ====================================== */}
+
+                <div>
+                  <label
+                    htmlFor="mensaje-confirmacion"
+                    className="
+                      mb-3 flex
+                      items-center gap-2
+                      text-xs font-semibold
+                      uppercase tracking-[0.15em]
+                    "
+                    style={{
+                      color: colores.cafe,
+                    }}
+                  >
+                    <MessageCircleHeart
+                      size={18}
+                      strokeWidth={1.5}
+                      color={colores.dorado}
+                    />
+
+                    Mensaje para Camila
+                  </label>
+
+                  <textarea
+                    id="mensaje-confirmacion"
+                    placeholder="Escribe tus mejores deseos..."
+                    value={mensaje}
+                    onChange={(e) => {
+                      setMensaje(e.target.value);
+                      setConfirmacion("");
+                    }}
+                    rows={4}
+                    className="
+                      w-full resize-none
+                      rounded-lg border
+                      px-5 py-4
+                      outline-none
+                      transition-colors
+                      duration-300
+                      placeholder:text-[#75533D]/50
+                      focus:border-[#B58C50]
+                    "
+                    style={estiloCampo}
+                  />
+                </div>
+
+                {/* ======================================
+                    BOTÓN WHATSAPP
+                ====================================== */}
+
+                <motion.button
+                  type="submit"
+                  whileHover={{
+                    scale: 1.015,
+                  }}
+                  whileTap={{
+                    scale: 0.98,
+                  }}
                   className="
-                    mb-3 flex
-                    items-center gap-2
-                    text-xs font-semibold
-                    uppercase tracking-[0.15em]
+                    flex w-full
+                    items-center justify-center
+                    gap-3 rounded-full
+                    px-6 py-4
+                    text-sm font-semibold
+                    tracking-wide
+                    transition-colors
+                    sm:text-base
                   "
                   style={{
-                    color: colores.cafe,
+                    backgroundColor: colores.cafe,
+                    color: colores.marfil,
+                    boxShadow:
+                      "0 8px 22px rgba(66,41,30,0.20)",
                   }}
                 >
-                  <MessageCircleHeart
-                    size={18}
-                    strokeWidth={1.5}
-                    color={colores.dorado}
+                  <Send
+                    size={19}
+                    strokeWidth={1.7}
                   />
 
-                  Mensaje para Camila
-                </label>
+                  Confirmar por WhatsApp
+                </motion.button>
 
-                <textarea
-                  id="mensaje-confirmacion"
-                  placeholder="Escribe tus mejores deseos..."
-                  value={mensaje}
-                  onChange={(e) =>
-                    setMensaje(e.target.value)
-                  }
-                  rows={4}
-                  className="
-                    w-full resize-none
-                    rounded-lg border
-                    px-5 py-4
-                    outline-none
-                    transition-colors
-                    duration-300
-                    placeholder:text-[#75533D]/50
-                    focus:border-[#B58C50]
-                  "
-                  style={estiloCampo}
-                />
-              </div>
+                {/* ======================================
+                    MENSAJE DE ERROR
+                ====================================== */}
 
-              {/* ======================================
-                  BOTÓN WHATSAPP
-              ====================================== */}
+                {confirmacion && (
+                  <p
+                    role="alert"
+                    className="
+                      text-center text-sm
+                      font-medium
+                    "
+                    style={{
+                      color: "#9B382F",
+                    }}
+                  >
+                    {confirmacion}
+                  </p>
+                )}
 
-              <motion.button
-                type="submit"
-                whileHover={{
-                  scale: 1.015,
-                }}
-                whileTap={{
-                  scale: 0.98,
-                }}
-                className="
-                  flex w-full
-                  items-center justify-center
-                  gap-3 rounded-full
-                  px-6 py-4
-                  text-sm font-semibold
-                  tracking-wide
-                  transition-colors
-                  sm:text-base
-                "
-                style={{
-                  backgroundColor: colores.cafe,
-                  color: colores.marfil,
-                  boxShadow:
-                    "0 8px 22px rgba(66,41,30,0.20)",
-                }}
-              >
-                <Send
-                  size={19}
-                  strokeWidth={1.7}
-                />
+                {/* AVISO */}
 
-                Confirmar por WhatsApp
-              </motion.button>
-
-              {/* VALIDACIÓN */}
-
-              {confirmacion && (
                 <p
-                  role="alert"
                   className="
-                    text-center text-sm
-                    font-medium
+                    text-center text-xs
+                    leading-relaxed
                   "
                   style={{
-                    color: colores.cafe,
+                    color: colores.cafeClaro,
                   }}
                 >
-                  {confirmacion}
+                  Al confirmar, se abrirá WhatsApp
+                  con tu mensaje preparado para enviarlo.
                 </p>
-              )}
+              </form>
+            )}
 
-              {/* AVISO */}
-
-              <p
-                className="
-                  text-center text-xs
-                  leading-relaxed
-                "
-                style={{
-                  color: colores.cafeClaro,
-                }}
-              >
-                Al confirmar, se abrirá WhatsApp
-                con tu mensaje preparado para enviarlo.
-              </p>
-            </form>
-
-            {/* ======================================
-                ORNAMENTO INFERIOR
-            ====================================== */}
+            {/* ORNAMENTO INFERIOR */}
 
             <div className="mt-12">
               <Ornamento />
@@ -839,8 +1118,7 @@ export default function ConfirmacionAsistencia() {
               sm:text-xl
             "
             style={{
-              fontFamily:
-                '"Playfair Display", Georgia, serif',
+              fontFamily: fuenteElegante,
               color: colores.cafe,
             }}
           >

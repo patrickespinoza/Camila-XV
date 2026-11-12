@@ -15,8 +15,6 @@ import {
 const vestimentaConfig = {
   titulo: "Formal",
 
-  descripcion:
-    "Para esta noche tan especial, te invito a lucir tu mejor atuendo y acompañarme a celebrar mis XV años con elegancia y mucho estilo.",
 
   frase:
     "Una noche mágica merece un look inolvidable.",
@@ -512,24 +510,9 @@ export default function Vestimenta() {
               <Ornamento />
             </div>
 
-            {/* DESCRIPCIÓN */}
+      
 
-            <p
-              className="
-                mx-auto mt-8
-                max-w-xl
-                font-serif text-base
-                leading-[1.9]
-                sm:text-lg
-              "
-              style={{
-                fontFamily:
-                  '"Playfair Display", Georgia, serif',
-                color: colores.cafeClaro,
-              }}
-            >
-              {vestimentaConfig.descripcion}
-            </p>
+        
 
             {/* DIVISOR */}
 
