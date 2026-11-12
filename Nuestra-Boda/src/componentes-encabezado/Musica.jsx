@@ -16,7 +16,7 @@ import {
 
 const musicaConfig = {
   archivo: "/musica.mp3",
-  nombre: "Camila",
+  nombre: "Sheila",
   titulo: "Mis XV Años",
   volumen: 0.65,
 };
@@ -449,23 +449,7 @@ export default function Musica() {
                   />
                 </div>
 
-                {/* SUBTÍTULO */}
-
-                <p
-                  className="
-                    mt-4 text-[9px]
-                    uppercase
-                    tracking-[0.25em]
-                    sm:mt-6
-                    sm:text-xs
-                    sm:tracking-[0.38em]
-                  "
-                  style={{
-                    color: colores.champagne,
-                  }}
-                >
-                  Una noche inolvidable
-                </p>
+    
 
                 {/* TÍTULO */}
 
@@ -589,24 +573,7 @@ export default function Musica() {
                   />
                 </motion.div>
 
-                {/* MENSAJE */}
 
-                <p
-                  className="
-                    mt-4 max-w-xs
-                    text-sm italic
-                    leading-relaxed
-                    sm:mt-6 sm:text-base
-                  "
-                  style={{
-                    fontFamily:
-                      '"Playfair Display", Georgia, serif',
-                    color: colores.marfil,
-                  }}
-                >
-                  Hay momentos que merecen
-                  una melodía especial...
-                </p>
 
                 <p
                   className="

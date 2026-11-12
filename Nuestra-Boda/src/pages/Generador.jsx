@@ -19,7 +19,7 @@ import {
 // ==========================================
 
 const CONFIG = {
-  quinceanera: "Camila",
+  quinceanera: "Sheila",
   evento: "Mis XV Años",
   fecha: "16 de enero de 2027",
   rutaInvitacion: "/",

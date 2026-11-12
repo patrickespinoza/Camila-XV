@@ -10,8 +10,8 @@ import { Heart, Sparkles } from "lucide-react";
 const datos = {
   quinceanera: "Isabella Montiel",
 
-  papa: "Airan Vazquez",
-  mama: "Arlet Ramirez",
+  papa: "Airan Vázquez Leal",
+  mama: "Arlet Ramirez Angeles",
 
   madrinas: [
     "Sheira Ramirez",
@@ -650,38 +650,7 @@ export default function Padres() {
           </div>
         </motion.div>
 
-        {/* ======================================
-            MENSAJE FINAL
-        ====================================== */}
-
-        <motion.div
-          {...aparecer}
-          transition={{
-            ...transicion,
-            delay: 0.2,
-          }}
-          className="mt-16"
-        >
-          <Ornamento />
-
-          <p
-            className="
-              mx-auto mt-8
-              max-w-md
-              font-serif text-base
-              italic leading-[1.9]
-              sm:text-lg
-            "
-            style={{
-              fontFamily:
-                '"Playfair Display", Georgia, serif',
-              color: colores.cafeClaro,
-            }}
-          >
-            Gracias por acompañarme en este
-            capítulo tan especial de mi vida.
-          </p>
-        </motion.div>
+        
       </div>
     </section>
   );

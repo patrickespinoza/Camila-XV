@@ -419,7 +419,7 @@ export default function Itinerario2() {
             }}
           >
             Cada momento de esta noche será
-            parte de una historia inolvidable.
+            parte de una historia.
           </p>
         </motion.div>
 
@@ -549,20 +549,7 @@ export default function Itinerario2() {
             />
           </div>
 
-          <p
-            className="
-              font-serif text-lg
-              italic leading-relaxed
-              sm:text-xl
-            "
-            style={{
-              fontFamily:
-                '"Playfair Display", Georgia, serif',
-              color: colores.cafe,
-            }}
-          >
-            ¡Prepárate para vivir una noche inolvidable!
-          </p>
+    
         </motion.div>
       </div>
     </section>

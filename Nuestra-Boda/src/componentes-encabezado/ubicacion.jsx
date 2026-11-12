@@ -36,7 +36,7 @@ const recepcion = {
   hora: "6:00 PM",
   lugar: "Salón de Eventos La Terraza",
   ubicacion:
-    "https://maps.app.goo.gl/ntHZNQM8thBfF1g58",
+    "https://maps.app.goo.gl/kedT9WBr13JRJ1UT9",
   icono: Wine,
   numero: "02",
 };
@@ -659,7 +659,7 @@ export default function Celebracion() {
               color: colores.marfil,
             }}
           >
-            Un día inolvidable
+            Celebracion
           </h2>
 
           {/* ORNAMENTO */}

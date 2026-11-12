@@ -21,7 +21,7 @@ import {
 const NUMERO_WHATSAPP = "525568804612";
 
 const datosEvento = {
-  quinceanera: "Camila",
+  quinceanera: "Sheila",
   titulo: "Mis XV Años",
 };
 
@@ -949,7 +949,7 @@ export default function ConfirmacionAsistencia() {
                 </AnimatePresence>
 
                 {/* ======================================
-                    MENSAJE PARA CAMILA
+                    MENSAJE PARA Sheila
                 ====================================== */}
 
                 <div>
@@ -971,7 +971,7 @@ export default function ConfirmacionAsistencia() {
                       color={colores.dorado}
                     />
 
-                    Mensaje para Camila
+                    Mensaje para Sheila
                   </label>
 
                   <textarea
@@ -1122,7 +1122,8 @@ export default function ConfirmacionAsistencia() {
               color: colores.cafe,
             }}
           >
-            ¡Gracias por ser parte de este día tan especial!
+            Gracias por acompañarme en este
+            capítulo tan especial de mi vida.
           </p>
         </motion.div>
       </div>

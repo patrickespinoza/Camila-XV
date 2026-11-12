@@ -16,8 +16,6 @@ const vestimentaConfig = {
   titulo: "Formal",
 
 
-  frase:
-    "Una noche mágica merece un look inolvidable.",
 
   mensajeColores:
     "Con mucho cariño, nos reservamos los siguientes colores para la quinceañera.",
@@ -300,17 +298,6 @@ export default function Vestimenta() {
         >
           <Ornamento claro />
 
-          <p
-            className="
-              mt-7 text-xs font-medium
-              uppercase tracking-[0.35em]
-            "
-            style={{
-              color: colores.champagne,
-            }}
-          >
-            Una noche especial
-          </p>
 
           <h2
             className="
