@@ -14,12 +14,9 @@ const datos = {
   mama: "Arlet Ramirez Angeles",
 
   madrinas: [
-    "Sheira Ramirez",
+    "Sheila Ramirez",
     "Yuridia Ramirez",
   ],
-
-  mensaje:
-    "Hay momentos en la vida que se convierten en recuerdos inolvidables. Hoy comienza una nueva etapa llena de sueños, ilusiones y esperanza.",
 };
 
 // ==========================================

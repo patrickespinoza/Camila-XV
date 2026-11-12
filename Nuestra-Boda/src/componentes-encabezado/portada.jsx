@@ -8,7 +8,7 @@ import { Crown, ChevronDown, Sparkles } from "lucide-react";
 // ==========================================
 
 const portadaConfig = {
-  nombre: "Sheila",
+  nombre: "Camila",
   fecha: "16 · 01 · 2027",
 };
 

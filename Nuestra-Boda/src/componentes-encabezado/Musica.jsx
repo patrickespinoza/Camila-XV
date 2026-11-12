@@ -16,7 +16,7 @@ import {
 
 const musicaConfig = {
   archivo: "/musica.mp3",
-  nombre: "Sheila",
+  nombre: "Camila",
   titulo: "Mis XV Años",
   volumen: 0.65,
 };
